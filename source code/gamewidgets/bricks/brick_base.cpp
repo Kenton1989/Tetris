@@ -1,24 +1,7 @@
-#include "tetris_component.hpp"
-
+#include "Brick_base.h"
 namespace Kenton {
-/*
-//get a list of coords from a list of square
-vector<Coord> get_coords (const it_Square &b, const it_Square &e) {
-    vector<Coord> v;
-    for(auto i = b; i != e; ++i)
-        v.push_back(i->pos);
-    return v;
-}
-//get a list of properties from a list of square
-vector<Square::Property> get_properties (const it_Square &b, const it_Square &e) {
-    vector<Square::Property> v;
-    for(auto i = b; i != e; ++i)
-        v.push_back(i->property);
-    return v;
-}
-*/
-/*
-Brick& Brick::move_by(Linear_Direction d, int step) {
+
+Brick_base& Brick_base::move_by(Linear_Direction d, int step) {
     switch (d) {
     case UP:
         move_by(0, -step);
@@ -38,7 +21,7 @@ Brick& Brick::move_by(Linear_Direction d, int step) {
     return *this;
 }
 
-Brick& Brick::rotate(Rotate_Direction d, int n_half_pi) {
+Brick_base& Brick_base::rotate(Rotate_Direction d, int n_half_pi) {
     //Convert the counterclockwise to clockwise
     if (d == COUNTERCLOCKWISE) n_half_pi = 4 - n_half_pi;
     n_half_pi %= 4;
@@ -70,7 +53,7 @@ Brick& Brick::rotate(Rotate_Direction d, int n_half_pi) {
     return *this;
 }
 
-vector<Coord>& Brick::adjacent(Linear_Direction d, vector<Coord> *output) {
+vector<Coord>& Brick_base::adjacent(Linear_Direction d, vector<Coord> *output) {
     shape_abs(output);
     switch (d) {
     case UP:
@@ -91,32 +74,10 @@ vector<Coord>& Brick::adjacent(Linear_Direction d, vector<Coord> *output) {
     return *output;
 }
 
-vector<Coord> Brick::adjacent(Linear_Direction d) {
+vector<Coord> Brick_base::adjacent(Linear_Direction d) {
     vector<Coord> v;
     return adjacent(d, &v);
 }
-*/
-/*
-const Map::Pixel Map::empty_pixel = Square::EMPTY;
-const Map::Pixel Map::invalid_pixel = Square::INVALID;
 
-void TetrisInfo::reset() {
-    _step = 5;
-    _counter = 0;
-    _score = 0;
-    _level = 1;
-    _rate = 1000; //unit ms;
-}
-
-
-void TetrisInfo::increase(int n) {
-    _counter += n;
-    _score += n*_level;
-    if (_counter > _level*_step) {
-        ++_level;
-        _rate = std::max(int(1000*(1 - 0.2*_level)), 1000/_level);
-        _counter = 0;
-    }
-}
-*/
 } //namespace Kenton
+

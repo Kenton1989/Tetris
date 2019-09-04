@@ -23,6 +23,7 @@ namespace Kenton {
 
 enum Linear_Direction { UP, DOWN, LEFT, RIGHT };
 enum Rotate_Direction { CLOCKWISE, COUNTERCLOCKWISE };
+/*
 struct Coord {
     //  0 x --->
     //  y
@@ -33,7 +34,8 @@ struct Coord {
     Coord(const Coord& c) = default;
     Coord(int x0, int y0): x(x0), y(y0) {}
 };
-struct Square;
+*/
+//struct Square;
 class Brick;
 class Map;
 class TetrisInfo;
@@ -41,7 +43,7 @@ class TetrisInfo;
 class Clock;
 class KeyboardInput;
 class Screen;
-
+/*
 struct Square {
     //used to define the apperance of square.
     enum Type {EMPTY, WALL, BRICK, INVALID};
@@ -77,7 +79,8 @@ using it_Square = initializer_list<Square>::iterator ;
 vector<Coord> get_coords (const it_Square &b, const it_Square &e);
 //get a list of properties from a list of square
 vector<Square::Property> get_properties (const it_Square &b, const it_Square &e);
-
+*/
+/*
 class Brick {
 public:
     Brick() = default;
@@ -176,7 +179,8 @@ private:
     decltype(&rotate_4o) rotate_default = &rotate_4o; //default rotate function, will very for diffent bricks
     decltype(&rotate_4o) rotate_back_default = &rotate_back_4o; //default rotate function, will very for diffent bricks
 };
-
+*/
+/*
 class Map {
 public:
     typedef Square::Property Pixel;
@@ -255,7 +259,8 @@ private:
         return p.type == Square::Type::EMPTY;
     }
 };
-
+*/
+/*
 class TetrisInfo {
 public:
     int score() const { return _score; }
@@ -274,7 +279,8 @@ private:
     int _rate = 1000; //unit ms;
     Brick _next;
 };
-
+*/
+/*
 class Clock {
 public:
     void set_timer(int t) {
@@ -296,10 +302,11 @@ private:
     int _clocks_beg = 0;
     int _clocks_end = 0;
     //for my lience, CLOCKS_PER_SEC == 1000
-    int clocks_to_ms (int c) { return /*1000.0/CLOCKS_PER_SEC**/c;}
-    int ms_to_clocks (int t) { return /*CLOCKS_PER_SEC/1000.0**/t;}
+    int clocks_to_ms (int c) { return /*1000.0/CLOCKS_PER_SEC*  /c;}
+    int ms_to_clocks (int t) { return /*CLOCKS_PER_SEC/1000.0* /t;}
 };
-
+*/
+/*
 class KeyboardInput {
 public:
     enum Key_id {
@@ -321,7 +328,7 @@ public:
         return kbhit();
     }
 };
-
+*/
 class Screen {
 public:
     Screen(int map_w, int map_h): _map_w(map_w), _px_map_w(map_w*2), _map_h(map_h), _next_brick_pos(_map_w+2, 3)  {
