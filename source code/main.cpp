@@ -1,7 +1,6 @@
 #include <iostream>
 #include "tetris.hpp"
 
-
 int main()
 {
     Kenton::Tetris game(15,20);

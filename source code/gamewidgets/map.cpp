@@ -1,8 +1,8 @@
 #include "map.h"
 namespace Kenton {
 
-const Map::Pixel Map::empty_pixel = Square::EMPTY;
-const Map::Pixel Map::invalid_pixel = Square::INVALID;
+const Map::Pixel Map::empty_pixel = Square::Type::EMPTY;
+const Map::Pixel Map::invalid_pixel = Square::Type::INVALID;
 
 void TetrisInfo::reset() {
     _step = 5;
