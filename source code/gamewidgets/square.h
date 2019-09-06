@@ -50,19 +50,9 @@ struct Square {
     Square (Coord c, Property p): pos(c), property(p) {}
 };
 
-template <typename SquareInputIter>
-struct __isSquareInputIter {
-    static constexpr bool value =
-            std::is_base_of<std::input_iterator_tag,
-                            typename std::iterator_traits<SquareInputIter>::iterator_category>::value &&
-            std::is_base_of<Square, decltype(*(SquareInputIter()))>::value;
-};
-
 //get a list of coords from a list of square
 template <typename outputContainerType = std::vector<Coord>,
-          typename SquareInputIter = std::initializer_list<Coord>,
-          typename = typename std::enable_if<__isSquareInputIter<SquareInputIter>>::type
-          >
+          typename SquareInputIter = std::initializer_list<Coord>>
 outputContainerType get_coords (SquareInputIter first, SquareInputIter last) {
     outputContainerType coords;
     std::transform(first, last, std::back_inserter(coords),
@@ -72,9 +62,7 @@ outputContainerType get_coords (SquareInputIter first, SquareInputIter last) {
 
 //get a list of properties from a list of square
 template <typename outputContainerType = std::vector<Square::Property>,
-          typename SquareInputIter = std::initializer_list<Coord>,
-          typename = typename std::enable_if<__isSquareInputIter<SquareInputIter>>::type
-          >
+          typename SquareInputIter = std::initializer_list<Coord>>
 outputContainerType get_properties (SquareInputIter first, SquareInputIter last) {
     outputContainerType properties;
     std::transform(first, last, std::back_inserter(properties),

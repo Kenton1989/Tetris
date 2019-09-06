@@ -33,12 +33,13 @@ public:
     Brick_base(Brick_base&&) = default;
     Brick_base& operator= (Brick_base&&) = default;
     virtual ~Brick_base();
-    //other constructor
-    Brick_base(initializer_list<Square> l): properties_(get_properties(l.begin(), l.end())),
-                                            shape_(get_coords(l.begin(), l.end())) {}
+    //Other constructor
+    Brick_base(const initializer_list<Square>& l):
+        properties_(get_properties(l.begin(), l.end())),
+        shape_(get_coords(l.begin(), l.end())) {}
     Brick_base(CoordContainer shape, PropertyContainer properties):
         properties_(properties), shape_(shape) {}
-
+    //Basic function
     int size() { return shape_.size(); }
     //Get/Add/Remove/Set Square
     const Square square(size_type index) {

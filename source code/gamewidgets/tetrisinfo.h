@@ -5,21 +5,21 @@ namespace Kenton {
 
 class TetrisInfo {
 public:
-    int score() const { return _score; }
-    int level() const  { return _level; }
-    int rate()  const  { return _rate; }
-    const Brick& next_brick()  const  { return _next; }
-    void set_next_brick(const Brick& b) { _next = b; }
+    int score() const { return score_; }
+    int level() const  { return level_; }
+    int rate()  const  { return rate_; }
+    const Brick& next_brick()  const  { return next_; }
+    void set_next_brick(const Brick& b) { next_ = b; }
 
     void reset();
     void increase(int n = 1);
 private:
-    int _step = 5;
-    int _counter = 0;
-    int _score = 0;
-    int _level = 1;
-    int _rate = 1000; //unit ms;
-    Brick _next;
+    int step_ = 5;
+    int counter_ = 0;
+    int score_ = 0;
+    int level_ = 1;
+    int rate_ = 1000; //unit ms;
+    Brick next_;
 };
 
 } //namespace Kenton
