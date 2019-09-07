@@ -5,7 +5,7 @@ namespace Kenton {
 
 Brick_base::~Brick_base() {}
 
-Brick_base& Brick_base::move_by(Linear d, int step) {
+void Brick_base::move_by(Linear d, int step) {
     switch (d) {
     case Linear::UP:
         move_by(0, -step);
@@ -20,7 +20,6 @@ Brick_base& Brick_base::move_by(Linear d, int step) {
         move_by(step, 0);
         break;
     }
-    return *this;
 }
 
 void Brick_base::rotate(Rotary d, int degree) {
@@ -33,19 +32,19 @@ void Brick_base::rotate(Rotary d, int degree) {
         break;
     case 90:
     case -270:
-        for(auto& s: _shape) {
+        for(auto& s: shape_) {
             tmp = s.y; s.y = s.x; s.x = -tmp;
         }
         break;
     case 180:
     case -180:
-        for(auto& s: _shape) {
+        for(auto& s: shape_) {
             s.y = -s.y, s.x = -s.x;
         }
         break;
     case 270:
     case -90:
-        for(auto& s: _shape) {
+        for(auto& s: shape_) {
             tmp = s.y; s.y = -s.x; s.x = tmp;
         }
         break;

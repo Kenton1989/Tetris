@@ -1,8 +1,39 @@
 #ifndef CLOCK_H
 #define CLOCK_H
 
+#include <type_traits>
+#include <ctime>
 
 namespace Kenton {
+
+struct TheSame_t {};
+struct Devidable_t {};
+struct Undevidable_t {};
+template <int IntFrom, int IntTo, typename ResultType, typename ValueType>
+ResultType unit_cast_impl(ValueType val, TheSame_t) { return val; }
+template <int IntFrom, int IntTo, typename ResultType, typename ValueType>
+ResultType unit_cast_impl(ValueType val, Devidable_t) {
+    static constexpr int ratio = IntTo/IntFrom;
+    return ratio*val;
+}
+template <int IntFrom, int IntTo, typename ResultType, typename ValueType>
+ResultType unit_cast_impl(ValueType val, Undevidable_t) {
+    static constexpr double ratio = double(IntTo)/IntFrom;
+    return ratio*val;
+}
+
+template <bool condition, typename TrueResult, typename FalseResult>
+using conditional_t = typename std::conditional<condition, TrueResult, FalseResult>::type;
+
+template <int IntFrom, int IntTo,
+          typename ResultType = conditional_t<IntTo%IntFrom, double, int>,
+          typename ValueType = int,
+          typename ValueRelation = conditional_t<IntTo%IntFrom, Undevidable_t,
+                                                 conditional_t<IntFrom==IntTo, TheSame_t, Undevidable_t>>>
+ResultType unit_cast(ValueType value) {
+    return unit_cast_impl<IntFrom, IntTo, ResultType, ValueType>
+            (value, ValueRelation());
+}
 
 class Clock {
 public:
@@ -24,9 +55,8 @@ public:
 private:
     int _clocks_beg = 0;
     int _clocks_end = 0;
-    //for my lience, CLOCKS_PER_SEC == 1000
-    int clocks_to_ms (int c) { return /*1000.0/CLOCKS_PER_SEC*/c;}
-    int ms_to_clocks (int t) { return /*CLOCKS_PER_SEC/1000.0*/t;}
+    static int clocks_to_ms (int c) { return unit_cast<CLOCKS_PER_SEC, 1000>(c);}
+    static int ms_to_clocks (int t) { return unit_cast<1000, CLOCKS_PER_SEC>(t);}
 };
 
 } //namespace Kenton

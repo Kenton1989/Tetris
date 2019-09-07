@@ -9,6 +9,8 @@ namespace Kenton {
 
 class Brick_4o: public Brick_base {
 public:
+    Brick_4o(const initializer_list<Square> l):
+        Brick_base(l) {}
     virtual void transform() override {
         rotate(Rotary::CLOCKWISE, 90);
     }
@@ -19,6 +21,8 @@ public:
 
 class Brick_2o: public Brick_base {
 public:
+    Brick_2o(const initializer_list<Square> l):
+        Brick_base(l) {}
     virtual void transform() override {
         turn();
     }
@@ -36,6 +40,8 @@ private:
 
 class Brick_1o: public Brick_base {
 public:
+    Brick_1o(const initializer_list<Square> l):
+        Brick_base(l) {}
     virtual void transform() override {}
     virtual void transform_back() override {}
 };

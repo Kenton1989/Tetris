@@ -37,7 +37,7 @@ public:
     Brick_base(const initializer_list<Square>& l):
         properties_(get_properties(l.begin(), l.end())),
         shape_(get_coords(l.begin(), l.end())) {}
-    Brick_base(CoordContainer shape, PropertyContainer properties):
+    Brick_base(const CoordContainer& shape, const PropertyContainer& properties):
         properties_(properties), shape_(shape) {}
     //Basic function
     int size() { return shape_.size(); }
@@ -108,7 +108,7 @@ public:
     Container& shape_at(const Coord &ref ,Container *output) const {
         output->clear();
         std::transform(shape_.begin(), shape_.end(), std::back_inserter(*output),
-                       [](const Coord&) { return Coord(c.x+ref.x, c.y+ref.y); });
+                       [&ref](const Coord& c) { return Coord(c.x+ref.x, c.y+ref.y); });
         return *output;
 
     }
@@ -135,12 +135,13 @@ public:
 
     CoordContainer adjacent(Linear d) {
         CoordContainer v;
-        return adjacent(d, &v);
+        adjacent(d, &v);
+        return v;
     }
     //Shape Transformation Function
     //straight move
-    Brick_base& move_by(int dx, int dy) { pos_.x += dx, pos_.y += dy; }
-    Brick_base& move_by(Linear d, int step = 1);
+    void move_by(int dx, int dy) { pos_.x += dx, pos_.y += dy; }
+    void move_by(Linear d, int step = 1);
     //Rotate functions
     void rotate(Rotary d, int degree);
     //all bricks but define their transform function
@@ -157,7 +158,7 @@ private:
 };
 
 template <typename Container>
-Container& adjacent(Linear d, Container *output) {
+Container& Brick_base::adjacent(Linear d, Container *output) {
     shape_abs(output);
     switch (d) {
     case Linear::UP:

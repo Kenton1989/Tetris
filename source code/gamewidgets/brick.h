@@ -2,7 +2,9 @@
 #define BRICK_H
 #include "bricks/brick_base.h"
 #include "bricks/brick_orientation.h"
-#include "memory"
+#include <ctime>
+#include <memory>
+#include <random>
 
 namespace Kenton {
 
@@ -18,19 +20,23 @@ enum class DefaultBrick {
 };
 
 using Brick = Brick_base;
-using BrickPtr = std::unique_ptr<Brick>;
+using std::unique_ptr;
 
-BrickPtr creatBrick(int orientation, std::initializer_list<Square> sq_list);
-BrickPtr creatBrick(DefaultBrick brick_type);
+unique_ptr<Brick> creatBrick(int orientation, const std::initializer_list<Square>& sq_list);
+unique_ptr<Brick> creatBrick(DefaultBrick brick_type);
 
+static std::default_random_engine randUInt(time(0));
 //random default brick type generater
 inline DefaultBrick randomBrickType() {
-    static std::default_random_engine randUInt(time(nullptr));
-    return static_cast<DefaultBrick>(randUInt()%DefaultBrick::TOTAL_NUM);
+    return static_cast<DefaultBrick>(randUInt()%static_cast<decltype(randUInt())>(DefaultBrick::TOTAL_NUM));
 }
 //random default brick generation function
-inline BrickPtr randomDefaultBrick() {
-    return creat_brick(randBrickType());
+inline unique_ptr<Brick> randomDefaultBrick() {
+    std::uniform_int_distribution<int> randTimes(1, 4);
+    unique_ptr<Brick> ret = creatBrick(randomBrickType());
+    for (int i = randTimes(randUInt); i > 0; --i)
+        ret->transform();
+    return ret;
 }
 
 } //namespace Kenton

@@ -13,7 +13,7 @@ class Map {
 public:
     using Pixel = Square::Property;
     using size_type = std::size_t;
-    using Matric_type = vector<deque<Pixel>>
+    using Matrix_type = vector<deque<Pixel>>;
     static const Pixel invalid_pixel;
 
     Map(size_type width, size_type height):
@@ -65,7 +65,6 @@ public:
     void set_all(const CoordContainer& c_list, const Pixel& p) {
         for (const auto &c: c_list)
             set(c, p);
-        return *this;
     }
     //clean pixel (set them to empty_pixel)
     void clean(int x, int y) {
@@ -110,6 +109,7 @@ public:
     static bool is_empty_pixel(const Pixel& p) {
         return p.type == Square::Type::EMPTY;
     }
+    //check whether there is a invalid pixel
     static bool is_invalid_pixel(const Pixel& p) {
         return p.type == Square::Type::INVALID;
     }
@@ -149,8 +149,8 @@ public:
 
     template <typename CoordInputIter>
     bool are_empty(CoordInputIter first, CoordInputIter last) const {
-        return std::are_all(first, last,
-                            [this](const Coord& c){ is_empty(c); });
+        return std::all_of(first, last,
+                            [this](const Coord& c){ return is_empty(c); });
     }
 
     template <typename CoordContainer>

@@ -1,56 +1,60 @@
-#include "tetris.hpp"
+#include "tetris.h"
 #include "windows.h"
 
 using namespace Kenton;
 
 
-Tetris::Tetris(int w, int h): _entrance(w/2+1, 0),_map(w+2, h+1), _screen(w+2, h+1) {
-    create_bricks();
-    _brick = random_brick();
-    _brick.set_pos(_entrance);
-    _info.set_next_brick(random_brick());
-    set_map_border(_map);
-    _init_done = true;
+Tetris::Tetris(int w, int h):
+    entrance_(w/2+1, 0),
+    brick_(randomDefaultBrick()),
+    map_(w+2, h+1), painter_(w+2, h+1)
+{
+    brick_->set_pos(entrance_);
+    info_.set_next_brick(randomDefaultBrick());
+    set_map_border(map_);
+    init_done_ = true;
 }
 
 void Tetris::init() {
-    if(_init_done)
+    if(init_done_)
         return;
-    _brick = random_brick();
-    _brick.set_pos(_entrance);
-    _map.clean();
-    set_map_border(_map);
-    _info.reset();
-    _info.set_next_brick(random_brick());
-    _gameover = false;
-    _init_done = true;
+    brick_ = randomDefaultBrick();
+    brick_->set_pos(entrance_);
+    map_.clean_all();
+    set_map_border(map_);
+    info_.reset();
+    info_.set_next_brick(randomDefaultBrick());
+    gameover_ = false;
+    init_done_ = true;
 }
 
 void Tetris::start() {
-    if (!_init_done)
+    if (!init_done_)
         init();
-    _init_done = false;
-    bool changed = false;
-    _clock.set_timer(_info.rate());
+    init_done_ = false;
+
     show();
-    while (!_gameover) {
-         changed = false;
 
-        if (_keyboard.has_input())
-            changed = input(_keyboard.get_input());
+    bool displayChanged = false;
+    clock.set_timer(info_.rate());
+    while (!gameover_) {
 
-        if (_clock.times_up()) {
+        if (keyboard_.has_input())
+            displayChanged = input(keyboard_.get_input());
+
+        if (clock.times_up()) {
             default_action();
-            changed = true;
+            displayChanged = true;
         }
 
-        if (changed)
+        if (displayChanged) {
             show();
+        }
 
+        displayChanged = false;
         Sleep(50);
     }
-    _screen.print_gameover();
-    _screen.set_consor_pos(0, _map.height());
+    painter_.print_gameover();
 }
 
 void Tetris::default_action() {
@@ -58,46 +62,47 @@ void Tetris::default_action() {
 }
 
 void Tetris::pause() {
-    _screen.print_pause(true);
-    int input, timer_rest = _clock.timer_rest();
+    painter_.print_pause();
+    int timer_rest = clock.timer_rest();
     while(true) {
-        if (_keyboard.has_input()) {
-            input = _keyboard.get_input();
+        while (keyboard_.has_input()) {
+            int input = keyboard_.get_input();
             if (input == 'p' || input == 'P')
                 break;
         }
         Sleep(50);
     }
-    _screen.print_pause(false);
-    _clock.set_timer(timer_rest);
+    painter_.print_pause(false);
+    clock.set_timer(timer_rest);
 }
 
+//react input, if nothing is changed, returns true, or returns false
 bool Tetris::input(int in) {
-    static vector<Coord> tmp;
+    static std::vector<Coord> tmp;
     switch (in) {
-    case KeyboardInput::UP_ARROW:
+    case Keyboard::Key_id::UP_ARROW:
     case 'w': case 'W':
-        _brick.rotate();
-        if (!_map.are_empty(_brick.shape_abs(&tmp))){
-            _brick.rotate_back();
+        brick_->transform();
+        if (!map_.are_empty(brick_->shape_abs(&tmp))){
+            brick_->transform_back();
             return false;
         }
         return true;
-    case KeyboardInput::DOWN_ARROW:
+    case Keyboard::Key_id::DOWN_ARROW:
     case 's': case 'S':
         return move_brick_down();
-    case KeyboardInput::LEFT_ARROW:
+    case Keyboard::Key_id::LEFT_ARROW:
     case 'a': case 'A':
-        if(_map.are_empty(_brick.adjacent(LEFT, &tmp))) {
-            _brick.move_by(LEFT);
+        if(map_.are_empty(brick_->adjacent(Linear::LEFT, &tmp))) {
+            brick_->move_by(Linear::LEFT);
             return true;
         } else {
             return false;
         }
-    case KeyboardInput::RIGHT_ARROW:
+    case Keyboard::Key_id::RIGHT_ARROW:
     case 'd': case 'D':
-        if(_map.are_empty(_brick.adjacent(RIGHT, &tmp))) {
-            _brick.move_by(RIGHT);
+        if(map_.are_empty(brick_->adjacent(Linear::RIGHT, &tmp))) {
+            brick_->move_by(Linear::RIGHT);
             return true;
         } else {
             return false;
@@ -112,69 +117,70 @@ bool Tetris::input(int in) {
 }
 
 void Tetris::show() {
-    _screen.print(_map);
-    _screen.print(_info);
-    _screen.print(_brick);
+    painter_.print(map_);
+    painter_.print(info_);
+    painter_.print(*brick_);
 }
 
 bool Tetris::move_brick_down() {
-    static vector<Coord> tmp_coord_v;
-    static set<int> tmp_int_set;
-    if(_map.are_empty(_brick.adjacent(DOWN, &tmp_coord_v))) {
-        _brick.move_by(DOWN);
+    static std::vector<Coord> tmp_coord_v;
+    static std::set<int> tmp_int_set;
+    if(map_.are_empty(brick_->adjacent(Linear::DOWN, &tmp_coord_v))) {
+        brick_->move_by(Linear::DOWN);
     } else {
         if (!draw_brick_on_map()) {
-            _gameover = true;
+            gameover_ = true;
             return false;
         }
         //search whether ther are some rows are filled and increase the score;
         int filled_row = 0;
-        for (int row: get_y_range(_brick.shape_abs(&tmp_coord_v), &tmp_int_set)) {
-            if (_map.row_is_filled(row)) {
+        for (int row: get_y_range(brick_->shape_abs(&tmp_coord_v), &tmp_int_set)) {
+            if (map_.row_is_filled(row)) {
                 ++filled_row;
-               /* because the row in set will be loop increasingly,
+               /* because the row in set will be loop increasingly (from upper to lower),
                 * no need to worry about the change of the number of the row
                 * caused by deleting a row
                 */
-                _map.clean_row(row);
-                _map.set(0, 0, Square::WALL);
-                _map.set(_map.width()-1, 0, Square::WALL);
-                _info.increase(filled_row);
+                map_.remove_row(row);
+                map_.set(0, 0, Square::Type::WALL);
+                map_.set(map_.width()-1, 0, Square::Type::WALL);
+                info_.increase(filled_row);
             }
         }
         //refresh the brick
-        _brick = _info.next_brick();
-        _brick.set_pos(_entrance);
-        _info.set_next_brick(random_brick());
+        brick_ = info_.set_next_brick(randomDefaultBrick());
+        brick_->set_pos(entrance_);
         //in case of some overlapping situations
-        for (const auto &c : _brick.shape_abs(&tmp_coord_v)) {
-            if (_map.is_valid_pos(c) && !_map.is_empty(c)) {
-                _gameover = true;
+        for (const auto &c : brick_->shape_abs(&tmp_coord_v)) {
+            if (map_.is_valid_pos(c) && !map_.is_empty(c)) {
+                gameover_ = true;
                 return false;
             }
         }
     }
-    _clock.set_timer(_info.rate());
+    clock.set_timer(info_.rate());
     return true;
 }
 
 void Tetris::set_map_border(Map& m) {
-    static Map::Pixel border_pixel = Square::WALL;
+    static Map::Pixel border_pixel = Square::Type::WALL;
     int h = m.height()-1, w = m.width();
     for (int i = 0; i < w; ++i)
-        _map.set(i, h, border_pixel);
+        map_.set(i, h, border_pixel);
     --w;
-    for (int i = 0; i < h; ++i)
-        _map.set(0, i, border_pixel).set(w, i, border_pixel);
+    for (int i = 0; i < h; ++i) {
+        map_.set(0, i, border_pixel);
+        map_.set(w, i, border_pixel);
+    }
 }
 
 bool Tetris::draw_brick_on_map() {
     static vector<Coord> tmp;
-    static const Map::Pixel brick_pixel = Square::BRICK;
-    _brick.shape_abs(&tmp);
-    if (!_map.are_valid_pos(tmp))
+    static const Map::Pixel brick_pixel = Square::Type::BRICK;
+    brick_->shape_abs(&tmp);
+    if (!map_.are_valid_pos(tmp))
         return false;
-    _map.set_all(tmp, brick_pixel);
+    map_.set_all(tmp, brick_pixel);
     return true;
 }
 
