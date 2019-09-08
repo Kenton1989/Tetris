@@ -128,6 +128,8 @@ bool Tetris::move_brick_down() {
     if(map_.are_empty(brick_->adjacent(Linear::DOWN, &tmp_coord_v))) {
         brick_->move_by(Linear::DOWN);
     } else {
+        //draw_brick_on_map() return false if the brick exceed the range of map
+        //that means gameover
         if (!draw_brick_on_map()) {
             gameover_ = true;
             return false;
@@ -142,6 +144,7 @@ bool Tetris::move_brick_down() {
                 * caused by deleting a row
                 */
                 map_.remove_row(row);
+                map_.add_first_row();
                 map_.set(0, 0, Square::Type::WALL);
                 map_.set(map_.width()-1, 0, Square::Type::WALL);
                 info_.increase(filled_row);

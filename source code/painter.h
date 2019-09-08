@@ -89,8 +89,8 @@ private:
         return true;
     }
     bool is_valid_pos(int x, int y) {
-        return x>0 && x<console_w_ &&
-               y>0 && y<console_h_;
+        return x>=0 && x<console_w_ &&
+               y>=0 && y<console_h_;
     }
     void clean(int x, int y, int w, int h) {
         if (!is_valid_pos(x,y))
