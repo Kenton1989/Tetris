@@ -5,9 +5,6 @@ CONFIG -= qt
 
 SOURCES += main.cpp \
     tetris.cpp \
-    tetris_auxiliary_function.cpp \
-    tetris_component.cpp \
-    log.cpp \
     gamewidgets/bricks/brick_orientation.cpp \
     gamewidgets/bricks/brick_base.cpp \
     gamewidgets/clock.cpp \
@@ -20,10 +17,6 @@ SOURCES += main.cpp \
     gamewidgets/brick.cpp
 
 HEADERS += \
-    tetris.hpp \
-    tetris_auxiliary_function.hpp \
-    tetris_component.hpp \
-    log.hpp \
     gamewidgets/bricks/brick_base.h \
     gamewidgets/bricks/brick_orientation.h \
     gamewidgets/clock.h \
@@ -33,4 +26,7 @@ HEADERS += \
     painter.h \
     gamewidgets/map.h \
     gamewidgets/tetrisinfo.h \
-    gamewidgets/brick.h
+    gamewidgets/brick.h \
+    gamewidgets/all.h \
+    systemwidgets/all.h \
+    tetris.h
