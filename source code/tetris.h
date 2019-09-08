@@ -1,29 +1,30 @@
 #ifndef TETRIS_HPP
 #define TETRIS_HPP
 #include <set>
-
-#include "tetris_component.hpp"
-#include "tetris_auxiliary_function.hpp"
-
-using std::set;
+#include "gamewidgets/all.h"
+#include "systemwidgets/all.h"
+#include "painter.h"
 
 namespace Kenton {
 
+using std::set;
+
 class Tetris {
+    using BrickPtr = std::unique_ptr<Brick>;
 public:
     Tetris(int w, int h);
     void init();
     void start();
 private:
-    bool _init_done = false;
-    bool _gameover = false;
-    Coord _entrance;
-    Brick _brick;
-    Map _map;
-    TetrisInfo _info;
-    Clock _clock;
-    KeyboardInput _keyboard;
-    Screen _screen;
+    bool init_done_ = false;
+    bool gameover_ = false;
+    Coord entrance_;
+    BrickPtr brick_;
+    Map map_;
+    TetrisInfo info_;
+    Clock clock;
+    Keyboard keyboard_;
+    Painter painter_;
 
     void default_action();
     void pause();
