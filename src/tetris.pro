@@ -10,17 +10,22 @@ CONFIG += c++11
 
 SOURCES += \
     brick.cpp \
+    brick_base.cpp \
     main.cpp \
     mainwindow.cpp \
     rect_field.cpp \
-    tetris_engine.cpp
+    tetris_engine.cpp \
+    tetris_engine_builder.cpp
 
 HEADERS += \
     brick.h \
+    brick_base.h \
     cell.h \
     mainwindow.h \
     rect_field.h \
-    tetris_engine.h
+    tetris_engine.h \
+    tetris_engine_builder.h \
+    vec2d.h
 
 FORMS += \
     mainwindow.ui
